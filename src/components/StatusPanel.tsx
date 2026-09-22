@@ -54,6 +54,114 @@ function resolvePanelState(feed: StatusFeed): PanelState {
   return hasDisruption ? "disruption" : "no-incidents";
 }
 
+function renderPanelContent(
+  panelState: PanelState,
+  feed: StatusFeed | null,
+  onRetry: () => void,
+  onViewChangelog: () => void,
+) {
+  switch (panelState) {
+    case "waiting":
+      return (
+        <>
+          <h1 className="text-2xl font-semibold">Stripe API Status</h1>
+          <hr className="my-4 border-zinc-300 dark:border-zinc-700" />
+          <SkeletonBars />
+          <div className="mt-6 min-h-[40px]" />
+        </>
+      );
+
+    case "no-incidents":
+      return (
+        <>
+          <h1 className="text-2xl font-semibold">Stripe API Status</h1>
+          <hr className="my-4 border-zinc-300 dark:border-zinc-700" />
+          <p>All systems operational.</p>
+          <div className="mt-4 flex min-h-[280px] flex-1 items-center justify-center">
+            <p>Nothing to report.</p>
+          </div>
+          <div className="mt-6 min-h-[40px]" />
+        </>
+      );
+
+    case "disruption":
+      if (!feed) {
+        return null;
+      }
+
+      return (
+        <>
+          <h1 className="text-2xl font-semibold">Stripe API Status</h1>
+          <hr className="my-4 border-zinc-300 dark:border-zinc-700" />
+          <p>Overall status: {feed.overall_status}.</p>
+          <ul className="mt-4 flex flex-col gap-4">
+            {feed.incidents.map((incident) => (
+              <li key={incident.id}>
+                <p>
+                  {incident.title} ·{" "}
+                  {incident.impact === "major" ? (
+                    <span className="text-red-600 dark:text-red-400">
+                      {incident.impact}
+                    </span>
+                  ) : (
+                    incident.impact
+                  )}{" "}
+                  · {incident.status} · {formatTimeAgo(incident.updated_at)}
+                </p>
+                <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+                  {incident.latest_update}
+                </p>
+              </li>
+            ))}
+          </ul>
+          <ul className="mt-4 flex min-h-[140px] flex-col gap-3">
+            {feed.changelog.map((entry) => (
+              <li key={entry.id}>
+                {entry.title} · {formatPublishedDate(entry.published_at)}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-6 min-h-[40px]">
+            <button
+              type="button"
+              onClick={onViewChangelog}
+              className="text-sm font-medium underline underline-offset-4"
+            >
+              View changelog
+            </button>
+          </div>
+        </>
+      );
+
+    case "network-failure":
+      return (
+        <>
+          <div className="flex flex-1 flex-col items-center justify-center text-center">
+            <h1 className="text-2xl font-semibold">Couldn&apos;t load status feed</h1>
+            <p className="mt-3 max-w-md text-zinc-600 dark:text-zinc-400">
+              This panel couldn&apos;t reach the status feed. Stripe services are
+              unaffected.
+            </p>
+          </div>
+          <div className="mt-6 min-h-[40px]">
+            <button
+              type="button"
+              onClick={onRetry}
+              className="text-sm font-medium underline underline-offset-4"
+            >
+              Retry
+            </button>
+          </div>
+        </>
+      );
+
+    default: {
+      const unhandledState: never = panelState;
+      throw new Error(`Unhandled panel state: ${unhandledState}`);
+    }
+  }
+}
+
 export default function StatusPanel() {
   const searchParams = useSearchParams();
   const [panelState, setPanelState] = useState<PanelState>("waiting");
@@ -108,85 +216,12 @@ export default function StatusPanel() {
 
   return (
     <section className="flex w-full min-h-[480px] flex-col px-6 py-8">
-      {panelState === "network-failure" ? (
-        <div className="flex flex-1 flex-col items-center justify-center text-center">
-          <h1 className="text-2xl font-semibold">Couldn&apos;t load status feed</h1>
-          <p className="mt-3 max-w-md text-zinc-600 dark:text-zinc-400">
-            This panel couldn&apos;t reach the status feed. Stripe services are
-            unaffected.
-          </p>
-        </div>
-      ) : (
-        <>
-          <h1 className="text-2xl font-semibold">Stripe API Status</h1>
-          <hr className="my-4 border-zinc-300 dark:border-zinc-700" />
-
-          {panelState === "waiting" && <SkeletonBars />}
-
-          {feed && panelState === "no-incidents" && (
-            <>
-              <p>All systems operational.</p>
-              <div className="mt-4 flex min-h-[280px] flex-1 items-center justify-center">
-                <p>Nothing to report.</p>
-              </div>
-            </>
-          )}
-
-          {feed && panelState === "disruption" && (
-            <>
-              <p>Overall status: {feed.overall_status}.</p>
-              <ul className="mt-4 flex flex-col gap-4">
-                {feed.incidents.map((incident) => (
-                  <li key={incident.id}>
-                    <p>
-                      {incident.title} ·{" "}
-                      {incident.impact === "major" ? (
-                        <span className="text-red-600 dark:text-red-400">
-                          {incident.impact}
-                        </span>
-                      ) : (
-                        incident.impact
-                      )}{" "}
-                      · {incident.status} · {formatTimeAgo(incident.updated_at)}
-                    </p>
-                    <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-                      {incident.latest_update}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-              <ul className="mt-4 flex min-h-[140px] flex-col gap-3">
-                {feed.changelog.map((entry) => (
-                  <li key={entry.id}>
-                    {entry.title} · {formatPublishedDate(entry.published_at)}
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </>
+      {renderPanelContent(
+        panelState,
+        feed,
+        handleRetry,
+        handleViewChangelog,
       )}
-
-      <div className="mt-6 min-h-[40px]">
-        {panelState === "network-failure" && (
-          <button
-            type="button"
-            onClick={handleRetry}
-            className="text-sm font-medium underline underline-offset-4"
-          >
-            Retry
-          </button>
-        )}
-        {panelState === "disruption" && (
-          <button
-            type="button"
-            onClick={handleViewChangelog}
-            className="text-sm font-medium underline underline-offset-4"
-          >
-            View changelog
-          </button>
-        )}
-      </div>
     </section>
   );
 }
