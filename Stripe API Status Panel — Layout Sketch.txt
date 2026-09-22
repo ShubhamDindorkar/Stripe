@@ -1,0 +1,40 @@
+Stripe API Status Panel — Labelled Layout Sketch
+
+One shared panel box. All four states render inside this box at the same size and position.
+
+┌─ PANEL BOX ─ full column width, min-height 480px ─────────────┐
+│                                                               │
+│  HEADING ROW                                                  │
+│  "Stripe API Status"                                          │
+│  (network failure replaces this with "Couldn't load status    │
+│   feed" and centres failure copy in the box below)           │
+│  ─────────────────────────────────────────────────────────    │
+│                                                               │
+│  OVERALL STATUS LINE (1 bar, same slot in every state)        │
+│  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭    ← skeleton placeholder bar 1       │
+│  (no active incidents: "All systems operational.")            │
+│  (active service disruption: "Overall status: degraded.")     │
+│                                                               │
+│  COMPONENT ROW AREA (4 bars, same height in every state)      │
+│  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭         ← skeleton placeholder bar 2       │
+│  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭      ← skeleton placeholder bar 3       │
+│  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭         ← skeleton placeholder bar 4       │
+│  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭        ← skeleton placeholder bar 5       │
+│  (populated: component name · status per row)                   │
+│                                                               │
+│  CHANGELOG ROW AREA (5 bars, same height in every state)      │
+│  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭    ← skeleton placeholder bar 6       │
+│  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭         ← skeleton placeholder bar 7       │
+│  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭      ← skeleton placeholder bar 8       │
+│  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭         ← skeleton placeholder bar 9       │
+│  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭        ← skeleton placeholder bar 10      │
+│  (no active incidents: "Nothing to report." centred here)     │
+│  (active service disruption: real changelog rows land here)   │
+│  (waiting on data: all ten skeleton bars fill this box)       │
+│                                                               │
+│  ─────────────────────────────────────────────────────────    │
+│  BUTTON SLOT   active service disruption → "View changelog"   │
+│                network failure             → "Retry"          │
+│                no active incidents         → empty, reserved  │
+│                waiting on data             → empty, reserved  │
+└───────────────────────────────────────────────────────────────┘
