@@ -1,18 +1,16 @@
 {
-  "page": {
-    "title": "Stripe API Status",
-    "updated_at": "2026-09-22T00:00:00Z"
-  },
+  "updated_at": "2024-09-18T14:32:07Z",
+  "overall_status": "degraded",
   "components": [
     {
-      "id": "api",
-      "name": "API",
+      "id": "payments-api",
+      "name": "Payments API",
       "status": "operational"
     },
     {
-      "id": "checkout",
-      "name": "Checkout",
-      "status": "operational"
+      "id": "webhooks",
+      "name": "Webhooks",
+      "status": "degraded"
     },
     {
       "id": "dashboard",
@@ -20,10 +18,46 @@
       "status": "operational"
     },
     {
-      "id": "webhooks",
-      "name": "Webhooks",
+      "id": "connect",
+      "name": "Connect",
       "status": "operational"
     }
   ],
-  "incidents": []
+  "changelog": [
+    {
+      "id": "chg_9f2a41",
+      "title": "Webhook delivery attempts are queuing behind a backlog in us-west",
+      "severity": "major",
+      "published_at": "2024-09-18T14:19:52Z",
+      "url": "https://docs.stripe.com/changelog"
+    },
+    {
+      "id": "chg_7c15be",
+      "title": "Elevated latency on card charge confirmations in eu-west has recovered",
+      "severity": "minor",
+      "published_at": "2024-09-17T09:04:18Z",
+      "url": "https://docs.stripe.com/changelog"
+    },
+    {
+      "id": "chg_4d80a3",
+      "title": "Connect payout schedules now expose a next_payout_date field",
+      "severity": "info",
+      "published_at": "2024-09-15T16:47:30Z",
+      "url": "https://docs.stripe.com/changelog"
+    },
+    {
+      "id": "chg_2b63f9",
+      "title": "Dashboard search returned stale results for saved payment methods",
+      "severity": "minor",
+      "published_at": "2024-09-13T11:22:05Z",
+      "url": "https://docs.stripe.com/changelog"
+    },
+    {
+      "id": "chg_1a07d2",
+      "title": "Payments API rate limit headers are returned on all v1 endpoints",
+      "severity": "info",
+      "published_at": "2024-09-11T08:10:44Z",
+      "url": "https://docs.stripe.com/changelog"
+    }
+  ]
 }
