@@ -19,3 +19,13 @@ export function formatTimeAgo(isoDate: string, now = Date.now()): string {
   const days = Math.floor(elapsedMs / DAY_MS);
   return days === 1 ? "1 day ago" : `${days} days ago`;
 }
+
+export function formatPublishedDate(date: string): string {
+  const parsed = new Date(`${date}T00:00:00Z`);
+  return parsed.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}

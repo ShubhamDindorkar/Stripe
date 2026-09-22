@@ -1,24 +1,23 @@
-export type ComponentStatus = "operational" | "degraded" | string;
-
-export type ChangelogSeverity = "major" | "minor" | "info" | string;
-
-export interface StatusComponent {
+export interface Incident {
   id: string;
-  name: string;
-  status: ComponentStatus;
+  title: string;
+  status: string;
+  impact: string;
+  started_at: string;
+  updated_at: string;
+  latest_update: string;
 }
 
 export interface ChangelogEntry {
   id: string;
   title: string;
-  severity: ChangelogSeverity;
   published_at: string;
   url: string;
 }
 
 export interface StatusFeed {
-  updated_at: string;
+  generated_at: string;
   overall_status: string;
-  components: StatusComponent[];
+  incidents: Incident[];
   changelog: ChangelogEntry[];
 }

@@ -12,15 +12,15 @@ One shared panel box. All four states render inside this box at the same size an
 │                                                               │
 │  OVERALL STATUS LINE (1 bar, same slot in every state)        │
 │  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭    ← skeleton placeholder bar 1       │
-│  (no active incidents: "All systems operational.")            │
+│  (no active incidents: "All systems operational.")              │
 │  (active service disruption: "Overall status: degraded.")     │
 │                                                               │
-│  COMPONENT ROW AREA (4 bars, same height in every state)      │
+│  INCIDENT ROW AREA (4 bars, same height in every state)       │
 │  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭         ← skeleton placeholder bar 2       │
 │  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭      ← skeleton placeholder bar 3       │
 │  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭         ← skeleton placeholder bar 4       │
 │  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭        ← skeleton placeholder bar 5       │
-│  (populated: component name · status per row)                   │
+│  (active service disruption: incident title + latest_update)  │
 │                                                               │
 │  CHANGELOG ROW AREA (5 bars, same height in every state)      │
 │  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭    ← skeleton placeholder bar 6       │
@@ -29,7 +29,7 @@ One shared panel box. All four states render inside this box at the same size an
 │  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭         ← skeleton placeholder bar 9       │
 │  ▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭▭        ← skeleton placeholder bar 10      │
 │  (no active incidents: "Nothing to report." centred here)     │
-│  (active service disruption: real changelog rows land here)   │
+│  (active service disruption: changelog title rows land here)    │
 │  (waiting on data: all ten skeleton bars fill this box)       │
 │                                                               │
 │  ─────────────────────────────────────────────────────────    │

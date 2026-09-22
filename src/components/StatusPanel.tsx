@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
-import { formatTimeAgo } from "@/lib/format-time-ago";
+import { formatPublishedDate, formatTimeAgo } from "@/lib/format-time-ago";
 import type { StatusFeed } from "@/types/status-feed";
 
 type PanelState = "waiting" | "no-incidents" | "disruption" | "network-failure";
@@ -29,7 +30,7 @@ function SkeletonBars() {
       <div className="mt-1 flex flex-col gap-3">
         {SKELETON_WIDTHS.slice(1, 5).map((width, index) => (
           <div
-            key={`component-skeleton-${index}`}
+            key={`incident-skeleton-${index}`}
             className={`h-4 rounded bg-zinc-300 dark:bg-zinc-700 ${width}`}
           />
         ))}
@@ -48,22 +49,28 @@ function SkeletonBars() {
 
 function resolvePanelState(feed: StatusFeed): PanelState {
   const hasDisruption =
-    feed.overall_status !== "operational" || feed.changelog.length > 0;
+    feed.overall_status !== "operational" || feed.incidents.length > 0;
 
   return hasDisruption ? "disruption" : "no-incidents";
 }
 
 export default function StatusPanel() {
+  const searchParams = useSearchParams();
   const [panelState, setPanelState] = useState<PanelState>("waiting");
   const [feed, setFeed] = useState<StatusFeed | null>(null);
   const [fetchKey, setFetchKey] = useState(0);
+
+  const queryString = searchParams.toString();
+  const feedUrl = queryString
+    ? `/api/status-feed?${queryString}`
+    : "/api/status-feed";
 
   const loadFeed = useCallback(async (signal: AbortSignal) => {
     setPanelState("waiting");
     setFeed(null);
 
     try {
-      const response = await fetch("/api/status-feed", { signal });
+      const response = await fetch(feedUrl, { signal });
 
       if (!response.ok) {
         setPanelState("network-failure");
@@ -80,7 +87,7 @@ export default function StatusPanel() {
 
       setPanelState("network-failure");
     }
-  }, []);
+  }, [feedUrl]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -119,14 +126,7 @@ export default function StatusPanel() {
           {feed && panelState === "no-incidents" && (
             <>
               <p>All systems operational.</p>
-              <ul className="mt-4 flex flex-col gap-3">
-                {feed.components.map((component) => (
-                  <li key={component.id}>
-                    {component.name} · {component.status}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-4 flex min-h-[140px] flex-1 items-center justify-center">
+              <div className="mt-4 flex min-h-[280px] flex-1 items-center justify-center">
                 <p>Nothing to report.</p>
               </div>
             </>
@@ -135,32 +135,30 @@ export default function StatusPanel() {
           {feed && panelState === "disruption" && (
             <>
               <p>Overall status: {feed.overall_status}.</p>
-              <ul className="mt-4 flex flex-col gap-3">
-                {feed.components.map((component) => (
-                  <li key={component.id}>
-                    {component.name} ·{" "}
-                    {component.status !== "operational" ? (
-                      <span className="text-red-600 dark:text-red-400">
-                        {component.status}
-                      </span>
-                    ) : (
-                      component.status
-                    )}
+              <ul className="mt-4 flex flex-col gap-4">
+                {feed.incidents.map((incident) => (
+                  <li key={incident.id}>
+                    <p>
+                      {incident.title} ·{" "}
+                      {incident.impact === "major" ? (
+                        <span className="text-red-600 dark:text-red-400">
+                          {incident.impact}
+                        </span>
+                      ) : (
+                        incident.impact
+                      )}{" "}
+                      · {incident.status} · {formatTimeAgo(incident.updated_at)}
+                    </p>
+                    <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+                      {incident.latest_update}
+                    </p>
                   </li>
                 ))}
               </ul>
               <ul className="mt-4 flex min-h-[140px] flex-col gap-3">
-                {feed.changelog.slice(0, 5).map((entry) => (
+                {feed.changelog.map((entry) => (
                   <li key={entry.id}>
-                    {entry.title} ·{" "}
-                    {entry.severity === "major" ? (
-                      <span className="text-red-600 dark:text-red-400">
-                        {entry.severity}
-                      </span>
-                    ) : (
-                      entry.severity
-                    )}{" "}
-                    · {formatTimeAgo(entry.published_at)}
+                    {entry.title} · {formatPublishedDate(entry.published_at)}
                   </li>
                 ))}
               </ul>
