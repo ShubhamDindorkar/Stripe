@@ -1,0 +1,29 @@
+{
+  "page": {
+    "title": "Stripe API Status",
+    "updated_at": "2026-09-22T00:00:00Z"
+  },
+  "components": [
+    {
+      "id": "api",
+      "name": "API",
+      "status": "operational"
+    },
+    {
+      "id": "checkout",
+      "name": "Checkout",
+      "status": "operational"
+    },
+    {
+      "id": "dashboard",
+      "name": "Dashboard",
+      "status": "operational"
+    },
+    {
+      "id": "webhooks",
+      "name": "Webhooks",
+      "status": "operational"
+    }
+  ],
+  "incidents": []
+}
